@@ -20,13 +20,13 @@ export default function Home() {
       </p>
 
       <Button className="bg-red">Red</Button>
-      <Button className="!bg-green">Green</Button>
-      <Button className="!bg-blue">Blue</Button>
-      <Button className="!bg-cyan">Cyan</Button>
-      <Button className="bg-magenta">Magenta</Button>
-      <Button className="bg-yellow">Yellow</Button>
-      <Button className="bg-purple">Purple</Button>
       <Button className="bg-orange">Orange</Button>
+      <Button className="bg-yellow">Yellow</Button>
+      <Button className="!bg-green">Green</Button>
+      <Button className="!bg-cyan">Cyan</Button>
+      <Button className="!bg-blue">Blue</Button>
+      <Button className="bg-purple">Purple</Button>
+      <Button className="bg-magenta">Magenta</Button>
     </div>
   )
 }
