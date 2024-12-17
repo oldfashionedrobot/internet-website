@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 *:focus-visible {
-  @apply outline outline-4 outline-blue outline-offset-2;
+  @apply outline outline-4 outline-highlight outline-offset-2 rounded;
 }
 
 body {
-  @apply text-white bg-black font-mono tracking-[0.125];
+  @apply text-foreground bg-background;
 }
 
 h1,
@@ -44,14 +44,5 @@ h6 {
 }
 
 a {
-  @apply text-green hover:underline underline-offset-4;
-}
-
-h1 {
-  font-size: 5em;
-  text-align: center;
-}
-
-a {
-  color: white;
+  @apply text-highlight hover:underline underline-offset-4;
 }

@@ -6,7 +6,7 @@ export default function Home() {
     <div>
       <hgroup className="p-10 leading-loose">
         <h1>Welcome to my house</h1>
-        <Button className="black">What Up Nerds</Button>
+        <Button>What Up Nerds</Button>
       </hgroup>
 
       <p className="p-10 pt-0">
@@ -19,14 +19,17 @@ export default function Home() {
         fugit? Placeat?
       </p>
 
-      <Button className="bg-red">Red</Button>
-      <Button className="bg-orange">Orange</Button>
-      <Button className="bg-yellow">Yellow</Button>
-      <Button className="!bg-green">Green</Button>
-      <Button className="!bg-cyan">Cyan</Button>
-      <Button className="!bg-blue">Blue</Button>
-      <Button className="bg-purple">Purple</Button>
-      <Button className="bg-magenta">Magenta</Button>
+      <div className="px-10">
+        <Button color="red">Red</Button>
+        <Button color="orange">Orange</Button>
+        <Button color="yellow">Yellow</Button>
+        <Button color="green">Green</Button>
+        <Button color="teal">Teal</Button>
+        <Button color="blue">Blue</Button>
+        <Button color="purple">Purple</Button>
+        <Button color="pink">Pink</Button>
+        <Button color="black">Black</Button>
+      </div>
     </div>
   )
 }

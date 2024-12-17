@@ -1,16 +1,17 @@
 import type { Config } from 'tailwindcss'
 
 export const COLORS = {
-  red: { DEFAULT: 'red' },
-  orange: { DEFAULT: 'orange' },
-  yellow: { DEFAULT: 'yellow' },
-  green: { DEFAULT: 'lime' },
-  blue: { DEFAULT: 'blue' },
-  purple: { DEFAULT: 'blueviolet' },
-  cyan: { DEFAULT: 'cyan' },
-  magenta: { DEFAULT: 'magenta' },
-  black: { DEFAULT: 'black' },
-  white: { DEFAULT: 'white' }
+  red: { DEFAULT: '#ea4335' },
+  orange: { DEFAULT: '#ff6d01' },
+  yellow: { DEFAULT: '#fbbc04' },
+  green: { DEFAULT: '#34a853' },
+  blue: { DEFAULT: '#4285f4' },
+  purple: { DEFAULT: '#9900ff' },
+  teal: { DEFAULT: '#46bdc6' },
+  pink: { DEFAULT: '#fc66fc' },
+  black: { DEFAULT: '#000000' },
+  white: { DEFAULT: '#ffffff' },
+  grey: { dark: '#434343', DEFAULT: '#cccccc', light: '#f3f3f3' }
 } as const
 
 export default {
@@ -22,9 +23,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: COLORS.black.DEFAULT,
-        foreground: COLORS.white.DEFAULT,
-        ...COLORS
+        ...COLORS,
+        background: COLORS.white.DEFAULT,
+        foreground: COLORS.black.DEFAULT,
+        highlight: COLORS.green.DEFAULT,
+        info: COLORS.blue.DEFAULT,
+        success: COLORS.green.DEFAULT,
+        error: COLORS.red.DEFAULT,
+        warning: COLORS.yellow.DEFAULT
       }
     }
   },
