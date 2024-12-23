@@ -1,14 +1,11 @@
 import { Button } from '@components/Button'
+import PageWrapper from '@components/PageWrapper'
 import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div>
-      <hgroup className="p-10">
-        <h1>Get out of my house</h1>
-      </hgroup>
-
-      <p className="p-10 pt-0">
+    <PageWrapper title="Home">
+      <p>
         Lorem ipsum dolor sit,&nbsp;
         <Link href="http://google.com">Click here</Link>
         &nbsp;amet consectetur adipisicing elit. Nulla cupiditate earum ullam
@@ -18,7 +15,7 @@ export default function Home() {
         fugit? Placeat?
       </p>
 
-      <div className="px-10 flex gap-2">
+      <div className="pt-10 flex gap-2">
         <Button color="red">Red</Button>
         <Button color="orange">Orange</Button>
         <Button color="yellow">Yellow</Button>
@@ -29,6 +26,6 @@ export default function Home() {
         <Button color="pink">Pink</Button>
         <Button color="black">Black</Button>
       </div>
-    </div>
+    </PageWrapper>
   )
 }
