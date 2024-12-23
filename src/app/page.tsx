@@ -4,9 +4,8 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <div>
-      <hgroup className="p-10 leading-loose">
-        <h1>Welcome to my house</h1>
-        <Button>What Up Nerds</Button>
+      <hgroup className="p-10">
+        <h1>Get out of my house</h1>
       </hgroup>
 
       <p className="p-10 pt-0">
@@ -19,7 +18,7 @@ export default function Home() {
         fugit? Placeat?
       </p>
 
-      <div className="px-10">
+      <div className="px-10 flex gap-2">
         <Button color="red">Red</Button>
         <Button color="orange">Orange</Button>
         <Button color="yellow">Yellow</Button>

@@ -3,7 +3,30 @@
 @tailwind utilities;
 
 *:focus-visible {
-  @apply outline outline-4 outline-highlight outline-offset-2 rounded;
+  @apply rounded relative outline outline-4 outline-current;
+  &::after {
+    left: -36px;
+    top: calc(50% - 6px);
+    content: '';
+    background: url('../../public/FF7Cursor.webp');
+    background-size: contain;
+    display: block;
+    width: 36px;
+    height: 18px;
+    position: absolute;
+    animation: float .8s ease-in-out infinite alternate;
+
+  }
+}
+
+@keyframes float {
+  0% {
+    top: calc(50% - 8px);
+  }
+
+  100% {
+    top: calc(50% - 4px);
+  }
 }
 
 body {

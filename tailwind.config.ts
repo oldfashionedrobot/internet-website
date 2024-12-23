@@ -8,10 +8,10 @@ export const COLORS = {
   blue: { DEFAULT: '#4285f4' },
   purple: { DEFAULT: '#9900ff' },
   teal: { DEFAULT: '#46bdc6' },
-  pink: { DEFAULT: '#fc66fc' },
+  pink: { DEFAULT: '#DC21FD' },
   black: { DEFAULT: '#000000' },
   white: { DEFAULT: '#ffffff' },
-  grey: { dark: '#434343', DEFAULT: '#cccccc', light: '#f3f3f3' }
+  gray: { dark: '#434343', DEFAULT: '#cccccc', light: '#f3f3f3' }
 } as const
 
 export default {
