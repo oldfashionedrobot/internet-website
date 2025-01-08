@@ -1,6 +1,6 @@
 export const MAIN_NAV = [
   { name: 'Home', path: '/' },
-  { name: 'Checklist', path: '/checklist' },
+  { name: 'Two', path: '/' },
   { name: 'Three', path: '/' },
   { name: 'Four', path: '/' },
   { name: 'Five', path: '/' },
