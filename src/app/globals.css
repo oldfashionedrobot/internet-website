@@ -14,8 +14,7 @@
     width: 36px;
     height: 18px;
     position: absolute;
-    animation: float .8s ease-in-out infinite alternate;
-
+    animation: float 0.8s ease-in-out infinite alternate;
   }
 }
 

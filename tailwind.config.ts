@@ -21,18 +21,19 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
-    extend: {
-      colors: {
-        ...COLORS,
-        background: COLORS.white.DEFAULT,
-        foreground: COLORS.black.DEFAULT,
-        highlight: COLORS.green.DEFAULT,
-        info: COLORS.blue.DEFAULT,
-        success: COLORS.green.DEFAULT,
-        error: COLORS.red.DEFAULT,
-        warning: COLORS.yellow.DEFAULT
-      }
+    // extend: {
+    colors: {
+      ...COLORS,
+      background: COLORS.white.DEFAULT,
+      foreground: COLORS.black.DEFAULT,
+      highlight: COLORS.green.DEFAULT,
+      info: COLORS.blue.DEFAULT,
+      success: COLORS.green.DEFAULT,
+      error: COLORS.red.DEFAULT,
+      warning: COLORS.yellow.DEFAULT,
+      current: 'currentColor'
     }
+    // }
   },
   plugins: []
 } satisfies Config
