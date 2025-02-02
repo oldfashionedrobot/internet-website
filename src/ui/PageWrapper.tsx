@@ -1,4 +1,4 @@
-import { MAIN_NAV } from '@shared/navigation'
+import { MAIN_NAV } from '@shared/navigation.const'
 import { PropsWithChildren } from 'react'
 import { Link } from './Link'
 

@@ -1,10 +1,12 @@
 'use client'
 
-import PageWrapper from '@components/PageWrapper'
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
+import PageWrapper from '@ui/PageWrapper'
 import { useEffect, useState } from 'react'
-import { Note, notesDb } from '@services/notesDb'
+import { Note, notesDb } from '@app/keep/services/notesDb'
+
+import './editor.css'
+import { NoteCard } from './components/NoteCard'
+import { JSONContent } from '@tiptap/react'
 
 export default function KeepPage() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -21,16 +23,21 @@ export default function KeepPage() {
   }, [])
 
   async function handleAddNote() {
-    const newNote = await notesDb.addNote('')
+    const newNote = await notesDb.addNote(null)
     setNotes((prev) => [...prev, newNote])
     setEditingId(newNote.id)
   }
 
-  async function handleUpdateNote(id: string, content: string) {
-    const updatedNote = await notesDb.updateNote(id, content)
+  async function handleUpdateNote(
+    id: string,
+    content: JSONContent,
+    title: string | null
+  ) {
+    const updatedNote = await notesDb.updateNote(id, content, title)
     setNotes((prev) =>
       prev.map((note) => (note.id === id ? updatedNote : note))
     )
+    setEditingId(null)
   }
 
   async function handleDeleteNote(id: string) {
@@ -55,10 +62,9 @@ export default function KeepPage() {
               note={note}
               isEditing={editingId === note.id}
               onEdit={() => setEditingId(note.id)}
-              onSave={(content) => {
-                handleUpdateNote(note.id, content)
-                setEditingId(null)
-              }}
+              onSave={(content, title) =>
+                handleUpdateNote(note.id, content, title)
+              }
               onDelete={() => handleDeleteNote(note.id)}
             />
           ))}
@@ -67,49 +73,3 @@ export default function KeepPage() {
     </PageWrapper>
   )
 }
-
-type NoteCardProps = {
-  note: Note
-  isEditing: boolean
-  onEdit: () => void
-  onSave: (content: string) => void
-  onDelete: () => void
-}
-
-function NoteCard({ note, isEditing, onEdit, onSave, onDelete }: NoteCardProps) {
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: note.content,
-    editable: isEditing
-  })
-
-  if (!editor) return null
-
-  return (
-    <div className="p-4 rounded-lg border border-gray hover:shadow-lg transition-shadow">
-      <div className="flex justify-between mb-2">
-        <div className="text-sm text-gray">
-          {new Date(note.updated).toLocaleDateString()}
-        </div>
-        <div className="flex gap-2">
-          {isEditing ? (
-            <button
-              onClick={() => onSave(editor.getHTML())}
-              className="text-green hover:underline"
-            >
-              Save
-            </button>
-          ) : (
-            <button onClick={onEdit} className="text-blue hover:underline">
-              Edit
-            </button>
-          )}
-          <button onClick={onDelete} className="text-red hover:underline">
-            Delete
-          </button>
-        </div>
-      </div>
-      <EditorContent editor={editor} />
-    </div>
-  )
-} 

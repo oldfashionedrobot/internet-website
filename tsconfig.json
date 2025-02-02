@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@*": ["./src/*"]
+      "@*": ["./src/*"],
+      "@keep/*": ["./src/app/keep/*"],
+      "@checks/*": ["./src/app/checks/*"],
+      "@3d/*": ["./src/app/3d/*"],
+      "@ui/*": ["./src/ui/*"]
     }
   },
   "include": [

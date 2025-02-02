@@ -1,6 +1,6 @@
 'use client'
 
-import PageWrapper from '@components/PageWrapper'
+import PageWrapper from '@ui/PageWrapper'
 import { useEffect, useMemo, useState } from 'react'
 
 const STORAGE_KEY = 'daily-checklist'

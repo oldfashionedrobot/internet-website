@@ -1,5 +1,5 @@
 'use client'
-import PageWrapper from '@components/PageWrapper'
+import PageWrapper from '@ui/PageWrapper'
 import { Canvas, useFrame, Vector3 } from '@react-three/fiber'
 import { useRef, useState } from 'react'
 import { Mesh } from 'three'
