@@ -11,17 +11,17 @@ export const COLORS = {
   pink: { DEFAULT: '#DC21FD' },
   black: { DEFAULT: '#000000' },
   white: { DEFAULT: '#ffffff' },
-  gray: { dark: '#434343', DEFAULT: '#cccccc', light: '#f3f3f3' }
+  gray: { dark: '#434343', DEFAULT: '#cccccc', light: '#f3f3f3' },
+  transparent: 'transparent',
+  current: 'currentColor'
 } as const
 
 export default {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/shared/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
-    // extend: {
     colors: {
       ...COLORS,
       background: COLORS.white.DEFAULT,
@@ -30,10 +30,8 @@ export default {
       info: COLORS.blue.DEFAULT,
       success: COLORS.green.DEFAULT,
       error: COLORS.red.DEFAULT,
-      warning: COLORS.yellow.DEFAULT,
-      current: 'currentColor'
+      warning: COLORS.yellow.DEFAULT
     }
-    // }
   },
   plugins: []
 } satisfies Config

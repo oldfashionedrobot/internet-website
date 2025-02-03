@@ -1,6 +1,6 @@
 'use client'
 
-import PageWrapper from '@ui/PageWrapper'
+import PageWrapper from '@components/PageWrapper'
 import { useEffect, useState } from 'react'
 import { Note, notesDb } from '@app/keep/services/notesDb'
 
@@ -28,11 +28,29 @@ export default function KeepPage() {
     setEditingId(newNote.id)
   }
 
+  // TODO: Handle potential race conditions with concurrent updates
+  // Consider implementing:
+  // 1. Optimistic updates for better UX
+  // 2. Loading state to prevent multiple simultaneous updates
+  // 3. Request cancellation for pending updates when new ones come in
+  // TODO: Add input validation and handle race conditions:
+  // - Validate content structure and title length
+  // - Implement optimistic updates
+  // - Add loading state to prevent concurrent updates
+  // - Consider debouncing rapid changes
   async function handleUpdateNote(
     id: string,
     content: JSONContent,
     title: string | null
   ) {
+    if (content.type !== 'doc') {
+      throw new Error('Invalid content structure')
+    }
+
+    if (title && title.length > 100) {
+      throw new Error('Title too long')
+    }
+
     const updatedNote = await notesDb.updateNote(id, content, title)
     setNotes((prev) =>
       prev.map((note) => (note.id === id ? updatedNote : note))

@@ -47,6 +47,8 @@ export function NoteCard({
 
   useEffect(() => {
     editor?.setEditable(isEditing)
+
+    return () => editor?.destroy()
   }, [editor, isEditing])
 
   if (!editor) return null

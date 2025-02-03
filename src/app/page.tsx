@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@ui/Button'
-import PageWrapper from '@ui/PageWrapper'
+import { Button } from '@components/Button'
+import PageWrapper from '@components/PageWrapper'
 import { useEffect, useState } from 'react'
 
 const DB_VERSION = 4
