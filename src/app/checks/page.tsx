@@ -1,11 +1,27 @@
 'use client'
 
-import PageWrapper from '@components/PageWrapper'
+import PageWrapper from '@shared/components/PageWrapper'
 import { useEffect, useMemo, useState } from 'react'
 
 const STORAGE_KEY = 'daily-checklist'
 
-enum Checks {
+// Time periods
+enum Period {
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+  QUARTERLY = 'QUARTERLY',
+  YEARLY = 'YEARLY'
+}
+
+// Daily checks
+enum DailyChecks {
+  MEDS = 'MEDS',
+  CHORES = 'CHORES',
+  JOB = 'JOB',
+  DUG_WALK = 'DUG_WALK',
+  DUG_BEDTIME = 'DUG_BEDTIME',
+  DUG_TRAINING = 'DUG_TRAINING',
   PLN = 'PLN',
   MED = 'MED',
   EXC = 'EXC',
@@ -15,18 +31,89 @@ enum Checks {
   TRY = 'TRY'
 }
 
-type DailyChecks = {
-  [key in Checks]: boolean
+// Weekly checks
+enum WeeklyChecks {
+  READ = 'READ',
+  DUG_BRUSH = 'DUG_BRUSH',
+  MEAL_PLAN = 'MEAL_PLAN',
+  SPRINT_PLAN = 'SPRINT_PLAN',
+  HOME = 'HOME',
+  FRIENDS = 'FRIENDS',
+  FAMILY = 'FAMILY',
+  COUSINS = 'COUSINS',
+  DATE = 'DATE'
+}
+
+// Monthly checks
+enum MonthlyChecks {
+  FINANCE = 'FINANCE',
+  LOAN = 'LOAN',
+  STOCK = 'STOCK',
+  DUG_GROOM = 'DUG_GROOM',
+  DUG_MEDS = 'DUG_MEDS'
+}
+
+// Quarterly checks
+enum QuarterlyChecks {
+  SHRUBS = 'SHRUBS',
+  TAXES = 'TAXES',
+  FILTER = 'FILTER'
+}
+
+// Yearly checks
+enum YearlyChecks {
+  DOCTOR = 'DOCTOR'
+}
+
+type CheckList = {
+  [Period.DAILY]: { [key in DailyChecks]: boolean }
+  [Period.WEEKLY]: { [key in WeeklyChecks]: boolean }
+  [Period.MONTHLY]: { [key in MonthlyChecks]: boolean }
+  [Period.QUARTERLY]: { [key in QuarterlyChecks]: boolean }
+  [Period.YEARLY]: { [key in YearlyChecks]: boolean }
 }
 
 type DB = {
-  [date: string]: DailyChecks
+  [date: string]: CheckList
 }
 
-const DEFAULT_CHECKS = Object.values(Checks).reduce((acc, check) => {
-  acc[check] = false
-  return acc
-}, {} as DailyChecks)
+const DEFAULT_CHECKS: CheckList = {
+  [Period.DAILY]: Object.values(DailyChecks).reduce(
+    (acc, check) => {
+      acc[check] = false
+      return acc
+    },
+    {} as { [key in DailyChecks]: boolean }
+  ),
+  [Period.WEEKLY]: Object.values(WeeklyChecks).reduce(
+    (acc, check) => {
+      acc[check] = false
+      return acc
+    },
+    {} as { [key in WeeklyChecks]: boolean }
+  ),
+  [Period.MONTHLY]: Object.values(MonthlyChecks).reduce(
+    (acc, check) => {
+      acc[check] = false
+      return acc
+    },
+    {} as { [key in MonthlyChecks]: boolean }
+  ),
+  [Period.QUARTERLY]: Object.values(QuarterlyChecks).reduce(
+    (acc, check) => {
+      acc[check] = false
+      return acc
+    },
+    {} as { [key in QuarterlyChecks]: boolean }
+  ),
+  [Period.YEARLY]: Object.values(YearlyChecks).reduce(
+    (acc, check) => {
+      acc[check] = false
+      return acc
+    },
+    {} as { [key in YearlyChecks]: boolean }
+  )
+}
 
 export default function Home() {
   const [db, setDb] = useState<DB>()
@@ -49,7 +136,15 @@ export default function Home() {
     }
 
     function initDb() {
-      setDb({ [today]: DEFAULT_CHECKS })
+      setDb({
+        [today]: {
+          [Period.DAILY]: DEFAULT_CHECKS[Period.DAILY],
+          [Period.WEEKLY]: DEFAULT_CHECKS[Period.WEEKLY],
+          [Period.MONTHLY]: DEFAULT_CHECKS[Period.MONTHLY],
+          [Period.QUARTERLY]: DEFAULT_CHECKS[Period.QUARTERLY],
+          [Period.YEARLY]: DEFAULT_CHECKS[Period.YEARLY]
+        }
+      })
     }
   }, [])
 
@@ -57,18 +152,20 @@ export default function Home() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db))
   }, [db])
 
-  function handleCheck(check: Checks, isChecked: boolean) {
+  function handleCheck(period: Period, check: string, isChecked: boolean) {
     if (!db) return
 
     const updated = {
       ...db,
       [today]: {
         ...db[today],
-        [check]: isChecked
+        [period]: {
+          ...db[today][period],
+          [check]: isChecked
+        }
       }
     }
 
-    // update storage
     setDb(updated)
   }
 
@@ -76,7 +173,14 @@ export default function Home() {
     <PageWrapper title="Checks">
       {db && (
         <div className="flex-col items-center">
-          <Checklist checklist={db[today]} onCheck={handleCheck} />
+          {Object.values(Period).map((period) => (
+            <Checklist
+              key={period}
+              period={period}
+              checklist={db[today][period]}
+              onCheck={handleCheck}
+            />
+          ))}
           <History db={db} />
         </div>
       )}
@@ -86,28 +190,53 @@ export default function Home() {
 
 function Checklist({
   checklist,
+  period,
   onCheck
 }: {
-  checklist: DailyChecks
-  onCheck?: (check: Checks, isChecked: boolean) => void
+  checklist: CheckList[keyof CheckList]
+  period: Period
+  onCheck?: (period: Period, check: string, isChecked: boolean) => void
 }) {
+  const getEmoji = (check: string) => {
+    const emojiMap: { [key: string]: string } = {
+      DUG_WALK: '🐶',
+      DUG_BEDTIME: '🐶',
+      DUG_TRAINING: '🐶',
+      PLN: '📜',
+      MED: '🧠',
+      EXC: '💪🏾',
+      SLP: '🛏️',
+      EAT: '🥦',
+      ART: '🎨',
+      TRY: '🧞‍♂️',
+      READ: '📚',
+      HOME: '🏡',
+      FAMILY: '👨‍👩‍👧‍👦',
+      DATE: '❤️',
+      FINANCE: '💰',
+      LOAN: '💳',
+      DOCTOR: '👨‍⚕️'
+    }
+    return emojiMap[check] || ''
+  }
+
   return (
-    <ul className="inline-flex gap-4">
-      {(Object.keys(checklist) as Checks[]).map((key) => {
-        const isChecked = checklist[key] === true
-        return (
+    <div className="mb-6">
+      <h3 className="mb-2">{period}</h3>
+      <ul className="flex flex-wrap gap-4">
+        {Object.entries(checklist).map(([key, isChecked]) => (
           <li key={key}>
             <label
               htmlFor={key + '_check'}
               className="flex items-center gap-1 font-bold"
             >
-              {key}
+              {getEmoji(key)} {key.replace(/_/g, ' ')}
               {onCheck ? (
                 <input
                   type="checkbox"
                   id={key + '_check'}
                   checked={isChecked}
-                  onChange={(e) => onCheck?.(key, e.target.checked)}
+                  onChange={(e) => onCheck?.(period, key, e.target.checked)}
                 />
               ) : isChecked ? (
                 '✅'
@@ -116,9 +245,9 @@ function Checklist({
               )}
             </label>
           </li>
-        )
-      })}
-    </ul>
+        ))}
+      </ul>
+    </div>
   )
 }
 
@@ -126,7 +255,7 @@ function History({ db }: { db: DB }) {
   return Object.keys(db).map((date) => (
     <div key={date}>
       <h4>{date}</h4>
-      <Checklist checklist={db[date]} />
+      <Checklist period={Period.DAILY} checklist={db[date][Period.DAILY]} />
     </div>
   ))
 }

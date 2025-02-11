@@ -1,6 +1,6 @@
 'use client'
 
-import PageWrapper from '@components/PageWrapper'
+import PageWrapper from '@shared/components/PageWrapper'
 import { useEffect, useState } from 'react'
 import { Note, notesDb } from '@app/keep/services/notesDb'
 

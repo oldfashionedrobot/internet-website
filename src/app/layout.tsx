@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Navigation } from '@components/Navigation'
+import { Navigation } from '@shared/components/Navigation'
 
 export const metadata: Metadata = {
   title: 'Track',
