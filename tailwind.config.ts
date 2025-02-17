@@ -24,8 +24,8 @@ export default {
   theme: {
     colors: {
       ...COLORS,
-      background: COLORS.white.DEFAULT,
-      foreground: COLORS.black.DEFAULT,
+      background: COLORS.black.DEFAULT,
+      foreground: COLORS.white.DEFAULT,
       highlight: COLORS.green.DEFAULT,
       info: COLORS.blue.DEFAULT,
       success: COLORS.green.DEFAULT,

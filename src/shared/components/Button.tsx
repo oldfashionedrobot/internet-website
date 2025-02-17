@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react'
+
 const COLOR_CLASSES = {
-  red: 'border-red bg-background text-red hover:bg-red hover:text-background active:bg-red active:text-background active:outline-red',
+  red: 'border-red bg-background text-red hover:bg-red hover:text-background active:bg-red active:text-white active:outline-red',
   orange:
     'border-orange bg-background text-orange hover:bg-orange hover:text-background active:bg-orange active:text-background active:outline-orange',
   yellow:
@@ -12,8 +13,8 @@ const COLOR_CLASSES = {
   purple:
     'border-purple bg-background text-purple hover:bg-purple hover:text-background active:bg-purple active:text-background active:outline-purple',
   pink: 'border-pink bg-background text-pink hover:bg-pink hover:text-background active:bg-pink active:text-background active:outline-pink',
-  black:
-    'border-black bg-background text-black hover:bg-black hover:text-background active:bg-black active:text-background active:outline-black'
+  contrast:
+    'border-foreground bg-background text-foreground hover:bg-foreground hover:text-background active:bg-foreground active:text-background active:outline-foreground'
 } as const
 
 type ButtonProps = PropsWithChildren<{
