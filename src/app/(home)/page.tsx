@@ -1,15 +1,22 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Stats } from '@react-three/drei'
+import { Vector3 } from 'three'
 import PageWrapper from '@shared/components/PageWrapper'
 import { FilingCabinet } from './components/FilingCabinet'
+import { CameraRig } from './components/CameraRig'
 
 export default function HomePage() {
-  // Approximate center of the cabinet:
-  // X: 0, Y: cabinetHeight/2 = 0.75, Z: roughly [-cabinetDepth / 2]
-  const cabinetCenter = [0, 0.75, -0.25] as const
+  const defaultTarget = new Vector3(0, 0.75, -0.25)
+  const defaultCameraPos = new Vector3(0, 0.75, 2)
+  const [cameraTarget, setCameraTarget] = useState(defaultTarget)
+  const [cameraPos, setCameraPos] = useState(defaultCameraPos)
+
+  const handleDrawerToggle = (target: Vector3, position: Vector3) => {
+    setCameraTarget(target)
+    setCameraPos(position)
+  }
 
   return (
     <PageWrapper title="Filing Cabinet">
@@ -19,9 +26,11 @@ export default function HomePage() {
         dpr={[1, 2]}
         style={{ height: '500px' }}
       >
-        <PerspectiveCamera makeDefault position={[0, 0.75, 2]} fov={50} />
-        <OrbitControls target={cabinetCenter} />
-        <Stats showPanel={0} />
+        <CameraRig
+          cameraTarget={cameraTarget}
+          cameraPos={cameraPos}
+          stats={true}
+        />
         <ambientLight intensity={0.7} />
         <spotLight
           position={[0.8, 2, 1]}
@@ -32,7 +41,7 @@ export default function HomePage() {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-        <FilingCabinet />
+        <FilingCabinet onDrawerToggle={handleDrawerToggle} />
         <mesh
           receiveShadow
           rotation={[-Math.PI / 2, 0, 0]}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Drawer } from './Drawer'
+import { Vector3 } from 'three'
 
 /**
  * FilingCabinet Component
@@ -7,7 +8,11 @@ import { Drawer } from './Drawer'
  * Builds the cabinet frame from separate panels (back, left, right, top, bottom) and
  * lays out three Drawer components in the front opening. Only one drawer can be open at a time.
  */
-export function FilingCabinet() {
+type FilingCabinetProps = {
+  onDrawerToggle: (target: Vector3, cameraPos: Vector3) => void
+}
+
+export function FilingCabinet({ onDrawerToggle }: FilingCabinetProps) {
   // Cabinet overall dimensions
   const cabinetWidth = 0.8 // meters
   const cabinetHeight = 1.5 // a bit shorter than an average person
@@ -48,8 +53,35 @@ export function FilingCabinet() {
 
   // Toggle logic: clicking a drawer opens it (and closes any other) or closes it if already open.
   const handleDrawerClick = (index: number) => {
-    setOpenDrawer((prev) => (prev === index ? null : index))
+    setOpenDrawer((prev) => {
+      const newOpen = prev === index ? null : index
+
+      if (newOpen !== null) {
+        // When a drawer is open, aim the camera to look downward into the drawer.
+        // For example, set the target a little lower (drawer center - 0.1 in Y)
+        // and raise the camera position (drawer center + 0.3 in Y) so it angles downward.
+        onDrawerToggle(
+          new Vector3(0, drawersY[index] - 0.2, 0),
+          new Vector3(0, drawersY[index] + 0.4, 0.5)
+        )
+      } else {
+        // Reset to the cabinet's default view.
+        onDrawerToggle(
+          new Vector3(0, cabinetHeight / 2, -cabinetDepth / 2),
+          new Vector3(0, 0.75, 2)
+        )
+      }
+
+      return newOpen
+    })
   }
+
+  // Sample folder configuration for each drawer.
+  const sampleFolders = [
+    { tabName: 'Folder 1', color: '#ff6347' },
+    { tabName: 'Folder 2', color: '#4682b4' },
+    { tabName: 'Folder 3', color: '#32cd32' }
+  ]
 
   return (
     <group>
@@ -138,6 +170,7 @@ export function FilingCabinet() {
             depth={drawerDepth}
             label={drawerLabels[i]}
             colorIndex={i}
+            folders={sampleFolders}
           />
         ))}
       </group>
