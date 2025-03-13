@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Group, MathUtils } from 'three'
+import { Group, MathUtils, Vector3 } from 'three'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
 import { Folder } from './Folder'
@@ -22,6 +22,12 @@ export type DrawerProps = {
   colorIndex?: number
   // New prop: an array of folder configurations
   folders?: FolderConfig[]
+  activeFolderId?: string | null // Tracks which folder is currently open
+  onFolderOpen: (
+    position: Vector3,
+    isOpening: boolean,
+    folderId: string
+  ) => void
 }
 
 const openDistance = 0.35
@@ -38,7 +44,9 @@ export function Drawer({
   depth,
   label,
   colorIndex,
-  folders = []
+  folders = [],
+  activeFolderId = null,
+  onFolderOpen
 }: DrawerProps) {
   const drawerGroupRef = useRef<Group>(null)
   const wallThickness = 0.02
@@ -69,6 +77,15 @@ export function Drawer({
     const randomIndex = Math.floor(Math.random() * noteColors.length)
     return noteColors[randomIndex]
   }, [colorIndex])
+
+  // Simplified folder click handler to reduce redundancy
+  const handleFolderClick = (
+    position: Vector3,
+    isOpening: boolean,
+    folderId: string
+  ) => {
+    onFolderOpen(position, isOpening, folderId)
+  }
 
   return (
     <group
@@ -140,23 +157,29 @@ export function Drawer({
           {/* Folders inside the drawer body */}
           {folders && folders.length > 0 && (
             <group>
-              {folders.map((folderConfig, idx) => (
-                <Folder
-                  key={idx}
-                  width={width * 0.9} // 90% of the drawer width for the folder body
-                  height={height * 0.6} // a fraction of the drawer height
-                  thickness={0.02}
-                  tabName={folderConfig.tabName}
-                  // color={folderConfig.color}
-                  index={idx}
-                  totalFolders={folders.length} // Pass total folders for even distribution
-                  // Adjust the z position so folders start further back inside the cavity
-                  position={[0, 0, -0.15 - idx * 0.045]}
-                  onClick={() => {
-                    // Stubbed onClick: Future logic to animate the folder out can be added here.
-                  }}
-                />
-              ))}
+              {folders.map((folderConfig, idx) => {
+                const folderId = `drawer-${position[1]}-folder-${idx}`
+                const isActive = folderId === activeFolderId
+                const isInteractive = !activeFolderId || isActive
+
+                return (
+                  <Folder
+                    key={idx}
+                    width={width * 0.9}
+                    height={height * 0.6}
+                    thickness={0.02}
+                    tabName={folderConfig.tabName}
+                    index={idx}
+                    totalFolders={folders.length}
+                    position={[0, 0, -0.15 - idx * 0.045]}
+                    isActive={isActive}
+                    isInteractive={isInteractive}
+                    onClick={(pos, opening) =>
+                      handleFolderClick(pos, opening, folderId)
+                    }
+                  />
+                )
+              })}
             </group>
           )}
         </group>

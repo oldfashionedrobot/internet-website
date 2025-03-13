@@ -10,9 +10,17 @@ import { Vector3 } from 'three'
  */
 type FilingCabinetProps = {
   onDrawerToggle: (target: Vector3, cameraPos: Vector3) => void
+  onFolderOpen: (
+    target: Vector3,
+    cameraPos: Vector3,
+    folderCenter: Vector3 | null
+  ) => void
 }
 
-export function FilingCabinet({ onDrawerToggle }: FilingCabinetProps) {
+export function FilingCabinet({
+  onDrawerToggle,
+  onFolderOpen
+}: FilingCabinetProps) {
   // Cabinet overall dimensions
   const cabinetWidth = 0.8 // meters
   const cabinetHeight = 1.5 // a bit shorter than an average person
@@ -48,32 +56,71 @@ export function FilingCabinet({ onDrawerToggle }: FilingCabinetProps) {
 
   const drawerLabels = ['Misc.', 'Stuff', 'Things']
 
-  // Keep track of which drawer (if any) is open.
+  // Keep track of which drawer (if any) is open
   const [openDrawer, setOpenDrawer] = useState<number | null>(null)
 
-  // Toggle logic: clicking a drawer opens it (and closes any other) or closes it if already open.
+  // Track if any folder is currently open
+  const [isFolderOpen, setIsFolderOpen] = useState(false)
+
+  // Track active folder id
+  const [activeFolderId, setActiveFolderId] = useState<string | null>(null)
+
+  // Simplified view functions to reduce duplication and improve organization
+  const getCabinetView = () => ({
+    target: new Vector3(0, cabinetHeight / 2, -cabinetDepth / 2),
+    position: new Vector3(0, 0.75, 2)
+  })
+
+  const getDrawerView = (drawerIndex: number) => {
+    const y = drawersY[drawerIndex]
+    return {
+      target: new Vector3(0, y - 0.1, 0),
+      position: new Vector3(0, y + 0.4, 0.5)
+    }
+  }
+
+  const getFolderView = (drawerIndex: number) => {
+    const y = drawersY[drawerIndex]
+    return {
+      target: new Vector3(0, y + 0.2, 0.2),
+      position: new Vector3(1.2, y + 0.7, 1.8)
+    }
+  }
+
+  // Simplified drawer click handler
   const handleDrawerClick = (index: number) => {
-    setOpenDrawer((prev) => {
-      const newOpen = prev === index ? null : index
+    // Don't allow drawer actions when a folder is open
+    if (isFolderOpen) return
 
-      if (newOpen !== null) {
-        // When a drawer is open, aim the camera to look downward into the drawer.
-        // For example, set the target a little lower (drawer center - 0.1 in Y)
-        // and raise the camera position (drawer center + 0.3 in Y) so it angles downward.
-        onDrawerToggle(
-          new Vector3(0, drawersY[index] - 0.2, 0),
-          new Vector3(0, drawersY[index] + 0.4, 0.5)
-        )
-      } else {
-        // Reset to the cabinet's default view.
-        onDrawerToggle(
-          new Vector3(0, cabinetHeight / 2, -cabinetDepth / 2),
-          new Vector3(0, 0.75, 2)
-        )
-      }
+    const newOpen = openDrawer === index ? null : index
+    setOpenDrawer(newOpen)
 
-      return newOpen
-    })
+    // Apply the appropriate camera view
+    const view = newOpen !== null ? getDrawerView(index) : getCabinetView()
+    onDrawerToggle(view.target, view.position)
+  }
+
+  // Simplified folder open handler
+  const handleFolderOpen = (
+    position: Vector3,
+    isOpening: boolean,
+    folderId: string
+  ) => {
+    setIsFolderOpen(isOpening)
+    setActiveFolderId(isOpening ? folderId : null)
+
+    const drawerIndex = openDrawer !== null ? openDrawer : 0
+
+    if (isOpening) {
+      // Move camera to folder view while enabling folder tracking
+      const view = getFolderView(drawerIndex)
+      onFolderOpen(view.target, view.position, position)
+    } else {
+      // When closing folder, return to drawer view if drawer is open
+      const view =
+        openDrawer !== null ? getDrawerView(drawerIndex) : getCabinetView()
+      onFolderOpen(view.target, view.position, null)
+    }
   }
 
   // Sample folder configuration for each drawer.
@@ -171,6 +218,8 @@ export function FilingCabinet({ onDrawerToggle }: FilingCabinetProps) {
             label={drawerLabels[i]}
             colorIndex={i}
             folders={sampleFolders}
+            activeFolderId={activeFolderId}
+            onFolderOpen={handleFolderOpen}
           />
         ))}
       </group>

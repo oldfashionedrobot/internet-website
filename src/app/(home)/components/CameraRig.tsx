@@ -6,48 +6,89 @@ import { Vector3 } from 'three'
 type CameraRigProps = {
   cameraTarget: Vector3
   cameraPos: Vector3
+  folderLookAt?: Vector3 | null
   stats?: boolean
 }
 
-export function CameraRig({ cameraTarget, cameraPos, stats }: CameraRigProps) {
+export function CameraRig({
+  cameraTarget,
+  cameraPos,
+  folderLookAt = null,
+  stats
+}: CameraRigProps) {
   const controlsRef = useRef<React.ElementRef<typeof OrbitControls>>(null)
   const cameraRef = useRef<React.ElementRef<typeof PerspectiveCamera>>(null)
 
-  // These flags let us know when our short transition is done.
-  const positionTransitionDone = useRef(false)
-  const targetTransitionDone = useRef(false)
+  // Store current animation state
+  const animationState = useRef({
+    time: 0,
+    duration: 1.5, // Animation duration in seconds
+    startTarget: new Vector3(),
+    startPosition: new Vector3(),
+    isAnimating: false
+  })
 
-  // Reset the flags if new external camera props are provided.
+  // Start a new animation when target or position changes
   useEffect(() => {
-    positionTransitionDone.current = false
-    targetTransitionDone.current = false
+    if (!controlsRef.current || !cameraRef.current) return
+
+    const state = animationState.current
+    state.time = 0
+    state.startTarget.copy(controlsRef.current.target)
+    state.startPosition.copy(cameraRef.current.position)
+    state.isAnimating = true
+
+    console.log('Starting new camera animation', {
+      from: state.startPosition.toArray(),
+      to: cameraPos.toArray()
+    })
   }, [cameraTarget, cameraPos])
 
-  useFrame(() => {
-    // Lerp the OrbitControls target only while not done transitioning
-    if (controlsRef.current && !targetTransitionDone.current) {
-      const currentTarget = controlsRef.current.target
-      // Check the distance between the current and target value
-      if (currentTarget.distanceTo(cameraTarget) > 0.01) {
-        currentTarget.lerp(cameraTarget, 0.1)
-        controlsRef.current.update()
-      } else {
-        // Once close enough, snap to the final target and stop further updates.
-        currentTarget.copy(cameraTarget)
-        targetTransitionDone.current = true
+  // Smooth easing function
+  const easeInOutCubic = (t: number): number => {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  }
+
+  useFrame((_, delta) => {
+    if (!controlsRef.current || !cameraRef.current) return
+
+    const state = animationState.current
+
+    // Priority 1: Handle camera position transitions
+    if (state.isAnimating) {
+      // Increment animation time
+      state.time += delta
+      const t = Math.min(state.time / state.duration, 1)
+      const easedT = easeInOutCubic(t)
+
+      // Always animate camera position regardless of folder tracking
+      cameraRef.current.position.lerpVectors(
+        state.startPosition,
+        cameraPos,
+        easedT
+      )
+
+      // Only animate target if not tracking a folder
+      if (!folderLookAt) {
+        controlsRef.current.target.lerpVectors(
+          state.startTarget,
+          cameraTarget,
+          easedT
+        )
+      }
+
+      // End animation when complete
+      if (t >= 1) {
+        state.isAnimating = false
       }
     }
 
-    // Lerp the camera position only while not done transitioning
-    if (cameraRef.current && !positionTransitionDone.current) {
-      const currentPos = cameraRef.current.position
-      if (currentPos.distanceTo(cameraPos) > 0.01) {
-        currentPos.lerp(cameraPos, 0.1)
-      } else {
-        currentPos.copy(cameraPos)
-        positionTransitionDone.current = true
-      }
+    // Priority 2: Update folder tracking after position is updated
+    if (folderLookAt) {
+      controlsRef.current.target.lerp(folderLookAt, 0.1)
     }
+
+    controlsRef.current.update()
   })
 
   return (
@@ -55,10 +96,15 @@ export function CameraRig({ cameraTarget, cameraPos, stats }: CameraRigProps) {
       <PerspectiveCamera
         ref={cameraRef}
         makeDefault
-        position={[0, 0.75, 2]}
+        position={[0, 0.75, 2]} // Use default values, will be updated in useFrame
         fov={50}
       />
-      <OrbitControls ref={controlsRef} />
+      <OrbitControls
+        ref={controlsRef}
+        enableZoom={false}
+        enablePan={false}
+        enableRotate={false}
+      />
       {stats && <Stats showPanel={0} />}
     </>
   )

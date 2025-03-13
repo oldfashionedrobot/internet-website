@@ -8,14 +8,30 @@ import { FilingCabinet } from './components/FilingCabinet'
 import { CameraRig } from './components/CameraRig'
 
 export default function HomePage() {
-  const defaultTarget = new Vector3(0, 0.75, -0.25)
-  const defaultCameraPos = new Vector3(0, 0.75, 2)
-  const [cameraTarget, setCameraTarget] = useState(defaultTarget)
-  const [cameraPos, setCameraPos] = useState(defaultCameraPos)
+  // Default camera views
+  const defaultView = {
+    target: new Vector3(0, 0.75, -0.25),
+    position: new Vector3(0, 0.75, 2)
+  }
 
-  const handleDrawerToggle = (target: Vector3, position: Vector3) => {
-    setCameraTarget(target)
-    setCameraPos(position)
+  // Simplified state management
+  const [cameraState, setCameraState] = useState({
+    target: defaultView.target,
+    position: defaultView.position,
+    folderCenter: null as Vector3 | null
+  })
+
+  // Combined handler for drawer and folder operations
+  const handleCameraUpdate = (
+    target: Vector3,
+    position: Vector3,
+    folderCenter: Vector3 | null = null
+  ) => {
+    setCameraState({
+      target,
+      position,
+      folderCenter
+    })
   }
 
   return (
@@ -27,8 +43,9 @@ export default function HomePage() {
         style={{ height: '500px' }}
       >
         <CameraRig
-          cameraTarget={cameraTarget}
-          cameraPos={cameraPos}
+          cameraTarget={cameraState.target}
+          cameraPos={cameraState.position}
+          folderLookAt={cameraState.folderCenter}
           stats={true}
         />
         <ambientLight intensity={0.7} />
@@ -41,7 +58,12 @@ export default function HomePage() {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-        <FilingCabinet onDrawerToggle={handleDrawerToggle} />
+        <FilingCabinet
+          onDrawerToggle={(target, position) =>
+            handleCameraUpdate(target, position)
+          }
+          onFolderOpen={handleCameraUpdate}
+        />
         <mesh
           receiveShadow
           rotation={[-Math.PI / 2, 0, 0]}
