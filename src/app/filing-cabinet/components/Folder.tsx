@@ -228,7 +228,7 @@ export function Folder({
       onClick={handleClick}
       // Make non-interactive folders visually distinct
       // and disable pointer events entirely
-      style={{
+      userData={{
         pointerEvents: isInteractive ? 'auto' : 'none',
         opacity: isInteractive ? 1 : 0.7
       }}

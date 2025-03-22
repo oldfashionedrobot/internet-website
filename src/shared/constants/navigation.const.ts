@@ -3,7 +3,7 @@ export const MAIN_NAV = [
   { name: 'Board', path: '/board' },
   { name: 'Checks', path: '/checks' },
   { name: 'Keep', path: '/keep' },
-  { name: 'Five', path: '/' },
+  { name: 'Filing Cabinet', path: '/filing-cabinet' },
   { name: 'Six', path: '/' },
   { name: 'Seven', path: '/' },
   { name: 'Eight', path: '/' }
