@@ -1,9 +1,0 @@
-.ProseMirror {
-  @apply p-4 min-h-[100px] focus:outline-none;
-}
-
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  @apply text-gray-dark float-left h-0 pointer-events-none;
-}
-
