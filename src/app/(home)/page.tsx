@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Vector3 } from 'three'
-import PageWrapper from '@shared/components/PageWrapper'
+import PageWrapper from '@app/shared/components/PageWrapper'
 import { FilingCabinet } from './components/FilingCabinet'
 import { CameraRig } from './components/CameraRig'
 

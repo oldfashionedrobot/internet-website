@@ -1,4 +1,4 @@
-import { MAIN_NAV } from '@shared/constants/navigation.const'
+import { MAIN_NAV } from '@app/shared/constants/navigation.const'
 import Link from 'next/link'
 
 const NAV_COLOR = [
